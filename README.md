@@ -4,7 +4,7 @@ Based on IP2Location PHP API with extra downloader tool
 
 ## Build Status
 
-
+[![Build Status](https://travis-ci.com/SmartFrame-Technologies/ip2location.svg?token=6h6rgvxfiMqi9o6VznZs&branch=master)](https://travis-ci.com/SmartFrame-Technologies/ip2location)
 
 ## License
 
