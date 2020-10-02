@@ -1,0 +1,33 @@
+{
+  "name": "smartframe-technologies/ip2location",
+  "description": "Based on IP2Location PHP API with extra downloader tool",
+  "minimum-stability": "stable",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Tomasz Woźniak",
+      "email": "tomasz.wozniak@smartframe.io"
+    }
+  ],
+  "require": {
+    "php": "^7.4",
+    "ip2location/ip2location-php": "^8.2",
+    "guzzlehttp/guzzle": "^7.1",
+    "ext-zip": "*"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-master",
+    "phpunit/phpunit": "^9.2",
+    "mikey179/vfsstream": "^1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "SmartFrame\\IP2Location\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SmartFrameTest\\IP2Location\\": "test/"
+    }
+  }
+}
