@@ -54,6 +54,4 @@ class Downloader implements DownloaderInterface
         $zip->close();
         unlink($filePath);
     }
-
-
 }
