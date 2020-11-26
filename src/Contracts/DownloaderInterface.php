@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SmartFrame\IP2Location;
-
+namespace SmartFrame\IP2Location\Contracts;
 
 interface DownloaderInterface
 {

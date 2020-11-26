@@ -6,6 +6,32 @@ Based on IP2Location PHP API with extra downloader tool
 
 [![Build Status](https://travis-ci.com/SmartFrame-Technologies/ip2location.svg?token=6h6rgvxfiMqi9o6VznZs&branch=master)](https://travis-ci.com/SmartFrame-Technologies/ip2location)
 
+## Usage
+
+Use static factory to get Exchanger. It requires you to give url with token and packages you desire to download.
+```
+$dbExchanger = DatabaseExchangeFactory::create($url, $package)
+```
+
+### Usage with cache 
+
+This tool can also use S3 as cache to store DB for many server instances, just provide array config as optional parameter.
+```
+$dbExchanger = DatabaseExchangeFactory::create($url, $package, $s3CacheConfig)
+```
+
+```$s3CacheConfig``` should be an array containing keys:
+``` 
+[
+    'Client' => [
+        'version' => 'my-version',
+        'region' =>  'my-region',
+    ],
+    'Bucket' => 'my-bucket',
+    'Key'    => 'my-object' //this key isn't store or cache in any way,
+]
+```
+
 ## License
 
 Copyright 2020 SmartFrame Technologies
