@@ -67,4 +67,10 @@ class S3FileCache implements FileCacheInterface
             $path
         );
     }
+
+    public function cloneFile(string $string): bool
+    {
+        $handler =  new Stream(fopen($string, 'rb+'));
+
+    }
 }

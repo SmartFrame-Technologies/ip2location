@@ -29,7 +29,7 @@ class DatabaseExchange
             if ($useCache && $this->fileCache->has($filePath)) {
                 $fileFromCache = $this->fileCache->read($filePath);
                 var_dump($fileFromCache);
-                //@todo save file on server
+                //@todo save file on host server
             }
             $this->downloader->save(dirname($filePath));
         }
