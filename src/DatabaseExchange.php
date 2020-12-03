@@ -37,7 +37,7 @@ class DatabaseExchange
         }
         echo ' filepath: ';
         var_dump($filePath);
-        var_dump($this->fileCache->cloneFile());
+        var_dump($this->fileCache->cloneFile($filePath));
         return true;
         /*
         if ($useCache && $this->fileCache->has($filePath)) {
