@@ -15,23 +15,35 @@ class DatabaseExchange
     public const MAX_FILE_LIFETIME = 33 * 24 * 3600;
 
     private DownloaderInterface $downloader;
-    private FileCacheInterface $fileCache;
+    private ?FileCacheInterface $fileCache;
 
-    public function __construct(DownloaderInterface $downloader, FileCacheInterface $fileCache)
+    public function __construct(DownloaderInterface $downloader, ?FileCacheInterface $fileCache = null)
     {
         $this->downloader = $downloader;
         $this->fileCache = $fileCache;
     }
 
-    public function exchange(string $filePath, $useCache = false): void
+    public function exchange(string $filePath): void
     {
         if (!file_exists($filePath) || (time() - filemtime($filePath)) > self::MAX_FILE_LIFETIME) {
-            if ($useCache && $this->fileCache->has($filePath)) {
-                $fileFromCache = $this->fileCache->read($filePath);
-                var_dump($fileFromCache);
-                //@todo save file on host server
-            }
-            $this->downloader->save(dirname($filePath));
+            $this->getFromCache($filePath) ?: $this->downloader->save(dirname($filePath));
         }
+    }
+
+    private function getFromCache(string $filePath): bool
+    {
+        if (empty($this->fileCache)) {
+            return false;
+        }
+        echo ' filepath: ';
+        var_dump($filePath);
+        var_dump($this->fileCache->cloneFile());
+        return true;
+        /*
+        if ($useCache && $this->fileCache->has($filePath)) {
+            $fileFromCache = $this->fileCache->read($filePath);
+            var_dump($fileFromCache);
+            //@todo save file on host server
+        }*/
     }
 }

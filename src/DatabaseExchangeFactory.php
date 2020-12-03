@@ -10,15 +10,25 @@ use GuzzleHttp\Client;
 class DatabaseExchangeFactory
 {
     public static function create(
-        string $downloadUrl,
-        array $packages,
-        array $s3CacheConfig = ['Client' => []]
+        string $sourcedUrl,
+        array $packages
     ): DatabaseExchange {
-        $cache = new S3FileCache(new S3Client([$s3CacheConfig['Client']]), $s3CacheConfig);
-
         return new DatabaseExchange(
-            new Downloader(new Client(), $cache, $downloadUrl, $packages),
+            new Downloader(new Client(), $sourcedUrl, $packages)
+        );
+    }
+
+    public static function createWithS3Cache(
+        S3Client $s3Client,
+        array $s3Config,
+        string $sourcedUrl,
+        array $packages
+    ): DatabaseExchange {
+        $cache = new S3FileCache($s3Client, $s3Config);
+        return new DatabaseExchange(
+            new Downloader(new Client(), $sourcedUrl, $packages, $cache),
             $cache
         );
     }
+
 }

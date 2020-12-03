@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SmartFrame\IP2Location;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Psr7\Stream;
 use RuntimeException;
 use SmartFrame\IP2Location\Contracts\DownloaderInterface;
 use SmartFrame\IP2Location\Contracts\FileCacheInterface;
@@ -16,18 +15,18 @@ class Downloader implements DownloaderInterface
     private ClientInterface $client;
     private string $downloadUrl;
     private array $packages;
-    private FileCacheInterface $cache;
+    private ?FileCacheInterface $fileCache;
 
     public function __construct(
         ClientInterface $client,
-        FileCacheInterface $cache,
         string $downloadUrl,
-        array $packages
+        array $packages,
+        ?FileCacheInterface $fileCache = null
     ) {
         $this->client = $client;
         $this->downloadUrl = $downloadUrl;
         $this->packages = $packages;
-        $this->cache = $cache;
+        $this->fileCache = $fileCache;
     }
 
     public function save(string $path): void
@@ -35,7 +34,7 @@ class Downloader implements DownloaderInterface
         foreach ($this->packages as $package) {
             $this->download($path, $package);
             $this->unzip($path, $package);
-            $this->cache->cloneFile($path . $package);
+            $this->fileCache->cloneFile($path . $package);
         }
     }
 
@@ -65,12 +64,15 @@ class Downloader implements DownloaderInterface
         unlink($filePath);
     }
 
-    public function downloadFromCache(string $path, array $package): void
+    public function downloadFromCache(array $package): bool
     {
         //@todo get files from s3 and ut in on host server
         //$path->save();
         //$this->cache->read($path);
+        if (empty($this->fileCache)) {
+            return false;
+        }
 
-        unset($client);
+        return true;
     }
 }
