@@ -23,7 +23,7 @@ class DatabaseExchange
     public function exchange(string $filePath): void
     {
         if (!file_exists($filePath) || (time() - filemtime($filePath)) > self::MAX_FILE_LIFETIME) {
-            $this->downloader->downloadFromCache($filePath) ?: $this->downloader->save(dirname($filePath));
+            $this->downloader->fromS3Cache($filePath) ?: $this->downloader->fromIp2Location($filePath);
         }
     }
 }

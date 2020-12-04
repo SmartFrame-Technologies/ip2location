@@ -29,12 +29,14 @@ class Downloader implements DownloaderInterface
         $this->fileCache = $fileCache;
     }
 
-    public function save(string $path): bool
+    public function fromIp2Location(string $path): bool
     {
+        $dir = dirname($path);
         foreach ($this->packages as $package) {
             if (strpos($path, $package['file']) !== false) {
-                $this->download($path, $package);
-                $this->unzip($path, $package);
+                //@todo temp do not download and unzip
+                //$this->download($dir, $package);
+                //$this->unzip($dir, $package);
                 $this->fileCache->cloneFile($path . $package);
 
                 return true;
@@ -44,7 +46,22 @@ class Downloader implements DownloaderInterface
         return false;
     }
 
-    public function download(string $path, array $package): void
+    public function fromS3Cache(string $filePath): bool
+    {
+        if (empty($this->fileCache)) {
+            return false;
+        }
+        if ($this->fileCache->has($filePath)) {
+            $fileFromCache = $this->fileCache->read($filePath);
+            var_dump($fileFromCache);
+            exit;
+            return true;
+        }
+
+        return false;
+    }
+
+    private function download(string $path, array $package): void
     {
         $this->client->request(
             'GET',
@@ -54,7 +71,7 @@ class Downloader implements DownloaderInterface
         unset($client);
     }
 
-    public function unzip(string $path, array $package): void
+    private function unzip(string $path, array $package): void
     {
         $filePath = sprintf('%s/%s', $path, $package['name']);
         $zip = new ZipArchive();
@@ -65,30 +82,7 @@ class Downloader implements DownloaderInterface
             throw new RuntimeException(sprintf('Cannot extract file "%s" from ZIPArchive located in %s', $package['file'], $filePath));
         }
         $zip->close();
-        unlink($filePath);
-    }
-
-    public function downloadFromCache(string $filePath): bool
-    {
-        if (empty($this->fileCache)) {
-            return false;
-        }
-
-        echo "\n";
-        echo ' Exchange->getFromCache: Filepath: ';
-        var_dump($filePath);
-        echo "\n";
-
-        //var_dump($this->fileCache->cloneFile($filePath));
-
-
-        if ($this->fileCache->has($filePath)) {
-            $fileFromCache = $this->fileCache->read($filePath);
-            var_dump($fileFromCache);
-            //@todo save file on host server
-            return true;
-        }
-
-        return false;
+        //@todo leave file for test reason
+        // unlink($filePath);
     }
 }
