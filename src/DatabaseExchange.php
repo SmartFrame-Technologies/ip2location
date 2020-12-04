@@ -24,9 +24,9 @@ class DatabaseExchange
     {
         if ($this->isDatabaseOutdated($filePath)) {
             $this->downloader->fromS3Cache($filePath);
-        }
-        if ($this->isDatabaseOutdated($filePath)) {
-            $this->downloader->fromIp2Location($filePath);
+            if ($this->isDatabaseOutdated($filePath)) {
+                $this->downloader->fromIp2Location($filePath);
+            }
         }
     }
 
