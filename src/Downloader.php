@@ -29,36 +29,26 @@ class Downloader implements DownloaderInterface
         $this->fileCache = $fileCache;
     }
 
-    public function fromIp2Location(string $path): bool
+    public function fromIp2Location(string $path): void
     {
         $dir = dirname($path);
         foreach ($this->packages as $package) {
             if (strpos($path, $package['file']) !== false) {
-                //@todo temp do not download and unzip
-                //$this->download($dir, $package);
-                //$this->unzip($dir, $package);
+                $this->download($dir, $package);
+                $this->unzip($dir, $package);
                 $this->fileCache->cloneFile($path);
 
-                return true;
+                return;
             }
         }
-
-        return false;
     }
 
-    public function fromS3Cache(string $filePath): bool
+    public function fromS3Cache(string $filePath): void
     {
         if (empty($this->fileCache)) {
-            return false;
+            return;
         }
-        if ($this->fileCache->has($filePath)) {
-            $fileFromCache = $this->fileCache->read($filePath)->getContents();
-            var_dump($fileFromCache);
-            exit;
-            return true;
-        }
-
-        return false;
+        file_put_contents($filePath . 'cached', $this->fileCache->read($filePath)->getContents());
     }
 
     private function download(string $path, array $package): void
@@ -82,7 +72,6 @@ class Downloader implements DownloaderInterface
             throw new RuntimeException(sprintf('Cannot extract file "%s" from ZIPArchive located in %s', $package['file'], $filePath));
         }
         $zip->close();
-        //@todo leave file for test reason
-        // unlink($filePath);
+        unlink($filePath);
     }
 }

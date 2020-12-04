@@ -42,7 +42,7 @@ class S3FileCache implements FileCacheInterface
     ): bool {
         $response = $this->s3Client->putObject([
             'Bucket' => $this->bucket,
-            'Key' => $path,
+            'Key' => $this->prefix . $path,
             'Body' => (string) $stream,
             'ContentType' => $mimeType,
             'StorageClass' => $class
@@ -65,6 +65,7 @@ class S3FileCache implements FileCacheInterface
         if (!$file) {
             throw new EmptyFileException('Source file not found!');
         }
-        $this->write($path, $file);
+
+        return $this->write($path, $file);
     }
 }

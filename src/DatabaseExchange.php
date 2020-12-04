@@ -22,8 +22,16 @@ class DatabaseExchange
 
     public function exchange(string $filePath): void
     {
-        if (!file_exists($filePath) || (time() - filemtime($filePath)) > self::MAX_FILE_LIFETIME) {
-            $this->downloader->fromS3Cache($filePath) ?: $this->downloader->fromIp2Location($filePath);
+        if ($this->isDatabaseOutdated($filePath)) {
+            $this->downloader->fromS3Cache($filePath);
         }
+        if ($this->isDatabaseOutdated($filePath)) {
+            $this->downloader->fromIp2Location($filePath);
+        }
+    }
+
+    private function isDatabaseOutdated(string $filePath): bool
+    {
+        return !file_exists($filePath) || (time() - filemtime($filePath)) > self::MAX_FILE_LIFETIME;
     }
 }
