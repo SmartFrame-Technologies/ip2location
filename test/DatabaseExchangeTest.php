@@ -7,8 +7,8 @@ namespace SmartFrameTest\IP2Location;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamFile;
 use PHPUnit\Framework\TestCase;
+use SmartFrame\IP2Location\Contracts\DownloaderInterface;
 use SmartFrame\IP2Location\DatabaseExchange;
-use SmartFrame\IP2Location\DownloaderInterface;
 
 class DatabaseExchangeTest extends TestCase
 {
@@ -18,7 +18,7 @@ class DatabaseExchangeTest extends TestCase
         $downloaderMock = $this->createMock(DownloaderInterface::class);
         $downloaderMock
             ->expects(self::once())
-            ->method('save');
+            ->method('fromIp2Location');
 
         $databaseExchange = new DatabaseExchange($downloaderMock);
 
@@ -32,7 +32,7 @@ class DatabaseExchangeTest extends TestCase
         $downloaderMock = $this->createMock(DownloaderInterface::class);
         $downloaderMock
             ->expects(self::once())
-            ->method('save');
+            ->method('fromIp2Location');
 
         $databaseExchange = new DatabaseExchange($downloaderMock);
 
@@ -49,7 +49,7 @@ class DatabaseExchangeTest extends TestCase
         $downloaderMock = $this->createMock(DownloaderInterface::class);
         $downloaderMock
             ->expects(self::never())
-            ->method('save');
+            ->method('fromIp2Location');
 
         $databaseExchange = new DatabaseExchange($downloaderMock);
 

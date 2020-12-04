@@ -31,8 +31,8 @@ class DownloaderTest extends TestCase
         $url = 'http://localhost';
         $package = ['code' => 'code', 'name' => 'file.zip'];
 
-        $downloader = new Downloader($client, $url, []);
-        $downloader->download($root->url(), $package);
+        $downloader = new Downloader($client, $url, $package);
+        $downloader->fromIp2Location($root->url());
 
         self::assertTrue($root->hasChild('file.zip'));
     }
