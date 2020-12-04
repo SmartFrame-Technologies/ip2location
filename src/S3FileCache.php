@@ -13,12 +13,11 @@ class S3FileCache implements FileCacheInterface
 {
     private S3ClientInterface $s3Client;
     private string $bucket;
-    private string $key;
 
     public function __construct(S3ClientInterface $s3Client, array $config)
     {
         $this->s3Client = $s3Client;
-        $this->bucket = $config['Bucket'];
+        $this->bucket = $config['bucket'];
     }
 
     public function read(string $path): StreamInterface
@@ -68,13 +67,12 @@ class S3FileCache implements FileCacheInterface
         );
     }
 
-    public function cloneFile(string $string): bool
+    public function cloneFile(string $path): bool
     {
-        echo $string;
-        $content = stream_get_contents(fopen($string, 'rb+'));
-        $this->s3Client->write($this->az5S3BridgePath, $content);
-
-        //$handler =  new Stream(fopen($string, 'rb+'));
-
+        echo ' ****** cloneFile opern stream from disk: ' . $path . ' ****** ';
+        $file = new Stream(fopen($path, 'rb+'));
+        var_dump($file->getContents());
+        $this->write($path, $file);
+        echo ' ****** cloneFile complete ***** ';
     }
 }

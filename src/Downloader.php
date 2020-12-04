@@ -29,13 +29,19 @@ class Downloader implements DownloaderInterface
         $this->fileCache = $fileCache;
     }
 
-    public function save(string $path): void
+    public function save(string $path): bool
     {
         foreach ($this->packages as $package) {
-            $this->download($path, $package);
-            $this->unzip($path, $package);
-            $this->fileCache->cloneFile($path . $package);
+            if (strpos($path, $package['file']) !== false) {
+                $this->download($path, $package);
+                $this->unzip($path, $package);
+                $this->fileCache->cloneFile($path . $package);
+
+                return true;
+            }
         }
+
+        return false;
     }
 
     public function download(string $path, array $package): void
@@ -51,12 +57,10 @@ class Downloader implements DownloaderInterface
     public function unzip(string $path, array $package): void
     {
         $filePath = sprintf('%s/%s', $path, $package['name']);
-
         $zip = new ZipArchive();
         if ($zip->open($filePath) !== true) {
             throw new RuntimeException('Cannot open ZIP file');
         }
-
         if ($zip->extractTo(dirname($filePath), $package['file']) !== true) {
             throw new RuntimeException(sprintf('Cannot extract file "%s" from ZIPArchive located in %s', $package['file'], $filePath));
         }
@@ -64,15 +68,27 @@ class Downloader implements DownloaderInterface
         unlink($filePath);
     }
 
-    public function downloadFromCache(array $package): bool
+    public function downloadFromCache(string $filePath): bool
     {
-        //@todo get files from s3 and ut in on host server
-        //$path->save();
-        //$this->cache->read($path);
         if (empty($this->fileCache)) {
             return false;
         }
 
-        return true;
+        echo "\n";
+        echo ' Exchange->getFromCache: Filepath: ';
+        var_dump($filePath);
+        echo "\n";
+
+        //var_dump($this->fileCache->cloneFile($filePath));
+
+
+        if ($this->fileCache->has($filePath)) {
+            $fileFromCache = $this->fileCache->read($filePath);
+            var_dump($fileFromCache);
+            //@todo save file on host server
+            return true;
+        }
+
+        return false;
     }
 }

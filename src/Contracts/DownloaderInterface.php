@@ -6,5 +6,6 @@ namespace SmartFrame\IP2Location\Contracts;
 
 interface DownloaderInterface
 {
-    public function save(string $filePath);
+    public function save(string $filePath): bool;
+    public function downloadFromCache(string $filePath): bool;
 }
