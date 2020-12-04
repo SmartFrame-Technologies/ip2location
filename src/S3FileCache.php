@@ -13,33 +13,24 @@ class S3FileCache implements FileCacheInterface
 {
     private S3ClientInterface $s3Client;
     private string $bucket;
+    private string $prefix;
 
-    public function __construct(S3ClientInterface $s3Client, array $config)
+    public function __construct(S3ClientInterface $s3Client, string $bucket, string $prefix)
     {
         $this->s3Client = $s3Client;
-        $this->bucket = $config['bucket'];
+        $this->bucket = $bucket;
+        $this->prefix = $prefix;
     }
 
     public function read(string $path): StreamInterface
     {
-        $result = $this->s3Client->getCommand('GetObject', [
+        $cmd = $this->s3Client->getCommand('GetObject', [
             'Bucket' => $this->bucket,
-            'Key' => $path,
+            'Key' => $this->prefix . $path,
         ]);
-        var_dump($result);
-        exit;
-
-        /*
         $request = $this->s3Client->createPresignedRequest($cmd, '+1 minute');
-        $url = $request->getUri()->__toString();
-        try {
-            return new Stream($url);
-        } catch (\InvalidArgumentException $e) {
-            throw new FileNotFoundException(
-                sprintf('File %s not found in storage', $path), 0, $e
-            );
-        }
-        */
+
+        return new Stream(fopen((string) $request->getUri(), 'rb'));
     }
 
     public function write(
@@ -63,16 +54,13 @@ class S3FileCache implements FileCacheInterface
     {
         return $this->s3Client->doesObjectExist(
             $this->bucket,
-            $path
+            $this->prefix . $path
         );
     }
 
     public function cloneFile(string $path): bool
     {
-        echo ' ****** cloneFile opern stream from disk: ' . $path . ' ****** ';
         $file = new Stream(fopen($path, 'rb+'));
-        var_dump($file->getContents());
         $this->write($path, $file);
-        echo ' ****** cloneFile complete ***** ';
     }
 }

@@ -22,12 +22,12 @@ class DatabaseExchangeFactory
         string $downloadUrl,
         array $packages,
         S3ClientInterface $s3Client,
-        array $s3Config
+        string $bucket,
+        string $prefix
     ): DatabaseExchange {
-        $cache = new S3FileCache($s3Client, $s3Config);
+        $cache = new S3FileCache($s3Client, $bucket, $prefix);
         return new DatabaseExchange(
             new Downloader(new Client(), $downloadUrl, $packages, $cache)
         );
     }
-
 }

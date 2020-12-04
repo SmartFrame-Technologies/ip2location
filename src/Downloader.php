@@ -37,7 +37,7 @@ class Downloader implements DownloaderInterface
                 //@todo temp do not download and unzip
                 //$this->download($dir, $package);
                 //$this->unzip($dir, $package);
-                $this->fileCache->cloneFile($path . $package);
+                $this->fileCache->cloneFile($path);
 
                 return true;
             }
@@ -52,7 +52,7 @@ class Downloader implements DownloaderInterface
             return false;
         }
         if ($this->fileCache->has($filePath)) {
-            $fileFromCache = $this->fileCache->read($filePath);
+            $fileFromCache = $this->fileCache->read($filePath)->getContents();
             var_dump($fileFromCache);
             exit;
             return true;
