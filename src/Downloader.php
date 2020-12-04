@@ -45,10 +45,10 @@ class Downloader implements DownloaderInterface
 
     public function fromS3Cache(string $filePath): void
     {
-        if (empty($this->fileCache)) {
+        if (empty($this->fileCache) || !$this->fileCache->has($filePath)) {
             return;
         }
-        file_put_contents($filePath . 'cached', $this->fileCache->read($filePath)->getContents());
+        file_put_contents($filePath, $this->fileCache->read($filePath)->getContents());
     }
 
     private function download(string $path, array $package): void
