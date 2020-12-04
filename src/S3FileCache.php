@@ -8,6 +8,7 @@ use Aws\S3\S3ClientInterface;
 use GuzzleHttp\Psr7\Stream;
 use Psr\Http\Message\StreamInterface;
 use SmartFrame\IP2Location\Contracts\FileCacheInterface;
+use SmartFrame\IP2Location\Exception\EmptyFileException;
 
 class S3FileCache implements FileCacheInterface
 {
@@ -61,6 +62,9 @@ class S3FileCache implements FileCacheInterface
     public function cloneFile(string $path): bool
     {
         $file = new Stream(fopen($path, 'rb+'));
+        if (!$file) {
+            throw new EmptyFileException('Source file not found!');
+        }
         $this->write($path, $file);
     }
 }
