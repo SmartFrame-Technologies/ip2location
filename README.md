@@ -6,6 +6,39 @@ Based on IP2Location PHP API with extra downloader tool
 
 [![Build Status](https://travis-ci.com/SmartFrame-Technologies/ip2location.svg?token=6h6rgvxfiMqi9o6VznZs&branch=master)](https://travis-ci.com/SmartFrame-Technologies/ip2location)
 
+## Basic usage
+
+Use static factory to get Exchanger. It requires you to give url with token and packages you desire to download.
+```
+$dbExchanger = DatabaseExchangeFactory::create($downloadUrl, $package)
+```
+
+Then specify file path:
+
+ ```
+ $dbExchanger->exchange('folder/ipDatabase.bin');
+```
+
+
+### Usage with cache 
+
+This tool can also use S3 as cache to store DB for many server instances.
+```
+$dbExchanger = DatabaseExchangeFactory::createWithS3Cache(
+                           $downloadUrl,
+                           $packages,
+                           $s3PhpClient, //AWS S3 Client
+                           $s3Bucket,
+                           $s3Prefix //folder name
+                       );
+```
+
+Then specify file path:
+
+ ```
+ $dbExchanger->exchange('folder/ipDatabase.bin');
+```
+
 ## License
 
 Copyright 2020 SmartFrame Technologies
