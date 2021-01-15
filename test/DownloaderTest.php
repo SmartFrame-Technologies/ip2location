@@ -17,25 +17,23 @@ class DownloaderTest extends TestCase
 
     public function testDownload(): void
     {
-        $this->markTestSkipped('Skipped until adjust download with new flow.');
+        if (extension_loaded('zip') === false) {
+            self::markTestSkipped('No ext/zip installed, skipping test.');
+        }
+        $mockFilename = 'db2.bin';
+        $mockedZipFilePath = __DIR__ . '/data/test.zip';
         $mock = new MockHandler([
             new Response(200, [
                 'Content-Type' => 'application/zip',
-                'Content-Disposition' => 'attachment; filename="file.zip"'
-            ], 'zip content'),
+                'Content-Disposition' => 'attachment; filename="' . $mockFilename . '"'
+            ], file_get_contents($mockedZipFilePath)),
         ]);
-
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
+        $package = [['code' => 'code', 'name' => $mockFilename, 'file' => $mockFilename]];
+        $downloader = new Downloader($client, '', $package);
+        $downloader->fromIp2Location(__DIR__ . '/data/downloaded_' . $mockFilename);
 
-        $root = vfsStream::setup('data');
-        $url = 'http://localhost';
-        $package = [['code' => 'code', 'name' => 'file.zip', 'file' => 'data']];
-
-
-        $downloader = new Downloader($client, $url, $package);
-        $downloader->fromIp2Location($root->url());
-
-        self::assertTrue($root->hasChild('file.zip'));
+        self::assertFileExists(__DIR__ . '/data/' . $mockFilename);
     }
 }

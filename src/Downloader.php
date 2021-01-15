@@ -36,7 +36,9 @@ class Downloader implements DownloaderInterface
             if (strpos($path, $package['file']) !== false) {
                 $this->download($dir, $package);
                 $this->unzip($dir, $package);
-                $this->fileCache->cloneFile($path);
+                if ($this->fileCache) {
+                    $this->fileCache->cloneFile($path);
+                }
 
                 return;
             }
@@ -72,6 +74,5 @@ class Downloader implements DownloaderInterface
             throw new RuntimeException(sprintf('Cannot extract file "%s" from ZIPArchive located in %s', $package['file'], $filePath));
         }
         $zip->close();
-        unlink($filePath);
     }
 }
