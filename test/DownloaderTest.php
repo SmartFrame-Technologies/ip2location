@@ -8,7 +8,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use SmartFrame\IP2Location\Downloader;
 
@@ -17,25 +16,21 @@ class DownloaderTest extends TestCase
 
     public function testDownload(): void
     {
-        $this->markTestSkipped('Skipped until adjust download with new flow.');
+        $mockZipFilename = 'tmp.zip';
+        $mockFilename = 'db2.bin';
+        $testZipFilePath = __DIR__ . '/data/test.zip';
         $mock = new MockHandler([
             new Response(200, [
                 'Content-Type' => 'application/zip',
-                'Content-Disposition' => 'attachment; filename="file.zip"'
-            ], 'zip content'),
+                'Content-Disposition' => 'attachment; filename="' . $mockZipFilename . '"'
+            ], file_get_contents($testZipFilePath)),
         ]);
-
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
+        $package = [['code' => 'code', 'name' => $mockZipFilename, 'file' => $mockFilename]];
+        $downloader = new Downloader($client, '', $package);
+        $downloader->fromIp2Location(__DIR__ . '/data/' . $mockFilename);
 
-        $root = vfsStream::setup('data');
-        $url = 'http://localhost';
-        $package = [['code' => 'code', 'name' => 'file.zip', 'file' => 'data']];
-
-
-        $downloader = new Downloader($client, $url, $package);
-        $downloader->fromIp2Location($root->url());
-
-        self::assertTrue($root->hasChild('file.zip'));
+        self::assertFileExists(__DIR__ . '/data/' . $mockFilename);
     }
 }
