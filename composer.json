@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": "^7.4",
+    "php": "^7.4 || ^8.0",
     "ip2location/ip2location-php": "^8.2",
     "guzzlehttp/guzzle": "^7.1",
     "ext-zip": "*"
