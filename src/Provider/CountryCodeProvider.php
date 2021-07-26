@@ -6,6 +6,7 @@ namespace SmartFrame\IP2Location\Provider;
 
 use IP2Location\Database;
 use OutOfBoundsException;
+use Throwable;
 
 class CountryCodeProvider
 {
@@ -21,14 +22,23 @@ class CountryCodeProvider
 
     public function lookup(string $ip): ?string
     {
-        $countryCode = null;
         try {
-            $countryCode = $this->fetchCountryCode($this->IPv4Database->lookup($ip));
-        } catch (OutOfBoundsException $exception) {
-            $countryCode = $this->fetchCountryCode($this->IPv6Database->lookup($ip));
-        } finally {
-            return $countryCode;
+            if (preg_match('/^(?:[\d]{1,3}\.){3}[\d]{1,3}$/', $ip)) {
+                $lookupResult = $this->IPv4Database->lookup($ip);
+            } else {
+                $lookupResult = $this->IPv6Database->lookup($ip);
+            }
+        } catch (Throwable $exception) {
+            $lookupResult = null;
         }
+
+        try {
+            $countryCode = $this->fetchCountryCode($lookupResult);
+        } catch (OutOfBoundsException $exception) {
+            $countryCode = null;
+        }
+
+        return $countryCode;
     }
 
     private function fetchCountryCode($countryCode): string

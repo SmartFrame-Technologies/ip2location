@@ -15,30 +15,16 @@ class CountryCodeProviderTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        self::$IPv4Database = new Database(__DIR__ . '/../data/IP2LOCATION-LITE-DB1.BIN');
-        self::$IPv6Database = new Database(__DIR__ . '/../data/IP2LOCATION-LITE-DB1.IPV6.BIN');
+        self::$IPv4Database = new Database(__DIR__ . '/../data/IP-COUNTRY-REGION-CITY-SAMPLE.BIN');
+        self::$IPv6Database = new Database(__DIR__ . '/../data/IPV6-COUNTRY-REGION-CITY.SAMPLE.BIN');
     }
 
-    public function testLookupPL(): void
+    public function testLookupSuccess(): void
     {
         $countryCodeProvider = new CountryCodeProvider(self::$IPv4Database, self::$IPv6Database);
 
         self::assertEquals('PL', $countryCodeProvider->lookup('89.64.24.81'));
-        self::assertEquals('PL', $countryCodeProvider->lookup('2a02:a317:4d3d:2b00:6419:2042:ffbb:5902'));
-    }
-
-    public function testLookupDE(): void
-    {
-        $countryCodeProvider = new CountryCodeProvider(self::$IPv4Database, self::$IPv6Database);
-
-        self::assertEquals('DE', $countryCodeProvider->lookup('95.91.210.2'));
-    }
-
-    public function testLookupUK(): void
-    {
-        $countryCodeProvider = new CountryCodeProvider(self::$IPv4Database, self::$IPv6Database);
-
-        self::assertEquals('GB', $countryCodeProvider->lookup('77.100.213.217'));
+        self::assertEquals('UA', $countryCodeProvider->lookup('2A04:0100:0a00:0200:0000:0000:0000:4000'));
     }
 
     public function testLookupWrongIP(): void
